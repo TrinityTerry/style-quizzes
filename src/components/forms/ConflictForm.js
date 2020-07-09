@@ -52,6 +52,7 @@ const ConflictForm = (props) => {
             </>
           );
         })}
+        {Math.floor(Math.random() * 5 + 1)}
         <br />
         {/* If past questions exist, allow the user to go back */}
         {currentQuestion.index > 0 && (
@@ -106,7 +107,37 @@ const ConflictForm = (props) => {
     const sorted = newArray.sort(function (a, b) {
       return b[1] - a[1];
     });
-    setResults({ dominant: sorted[0][0], backUp: sorted[1][0] });
+    let dominant = sorted[0][0];
+    let backUp = sorted[1][0];
+    let startIndex = 1;
+
+    if (sorted[0][1] == sorted[1][1]) {
+      dominant = "";
+      const value = sorted[0][1];
+      startIndex = 0;
+      sorted.forEach((item, i) => {
+        if (item[1] == value) {
+          dominant += item[0] + " ";
+          startIndex = i + 1;
+        }
+      });
+    }
+    if (startIndex == 5) {
+      backUp = "";
+    } else {
+      const start = sorted[startIndex];
+      const value = start[1];
+      if (sorted[startIndex + 1][1] == value) {
+        backUp = "";
+        sorted.forEach((item, i) => {
+          if (item[1] == value) {
+            backUp += item[0] + " ";
+          }
+        });
+      }
+    }
+
+    setResults({ dominant: dominant, backUp: backUp });
   };
 
   const goBack = () => {
