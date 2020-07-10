@@ -2,7 +2,7 @@ import React from "react";
 import "./formStyles.scss";
 const StyledForm = ({
   question,
-  answers,
+  answerHeight = 0,
   currentAnswer,
   handleAnswerChange,
   handleBack,
@@ -16,9 +16,9 @@ const StyledForm = ({
         <div>{question.question}</div>
       </div>
       <div className="form-all-answers ">
-        {Object.keys(answers).map((item) => {
+        {Object.keys(question.answers).map((item) => {
           return (
-            <div className="form-answer d-flex">
+            <div className={`form-answer d-flex h-${answerHeight}`}>
               <input
                 type="radio"
                 name="answer"
@@ -35,7 +35,7 @@ const StyledForm = ({
                     currentAnswer == item && "selected"
                   } form-answer-text `}
                 >
-                  {answers[item]}
+                  {question.answers[item]}
                 </div>
               </label>
             </div>

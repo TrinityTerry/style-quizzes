@@ -4,7 +4,8 @@ import { ConflictForm } from "./components";
 function App() {
   return (
     <div className="App">
-      <ConflictForm />
+      {/* <ConflictForm type="conflict" /> */}
+      <ConflictForm type="learning" />
     </div>
   );
 }

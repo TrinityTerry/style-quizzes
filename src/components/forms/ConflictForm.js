@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import {
   shuffleQuestions,
   answerObj,
-  formAnswers,
   calculationObj,
 } from "../../modules/conflictData";
 import StyledForm from "./FormStyles";
-const ConflictForm = (props) => {
+const ConflictForm = ({ type }) => {
   const [questions, setQuestions] = useState([]); // Stores all questions [{question:"", letter:""}, ..]
   const [answers, setAnswers] = useState({}); // Stores all user answers {a:0, b:0, ...}
   const [currentAnswer, setCurrentAnswer] = useState(0); // stores answer to the current answer
@@ -14,17 +13,20 @@ const ConflictForm = (props) => {
   const [results, setResults] = useState({});
   useEffect(() => {
     //   Checks local storage for saved questions and answers
-    const savedQuestions = window.localStorage.getItem("conflictQuestions");
-    const savedAnswers = window.localStorage.getItem("conflictAnswers");
+    const savedQuestions = window.localStorage.getItem(`${type}Questions`);
+    const savedAnswers = window.localStorage.getItem(`${type}Answers`);
     // If there are saved questions, then get that data and push it to state
     // else generate the question array
-    setQuestions(
-      savedQuestions ? JSON.parse(savedQuestions) : shuffleQuestions()
-    );
+    const shuffled = shuffleQuestions(type);
+    console.log(shuffled);
+
+    setQuestions(savedQuestions ? JSON.parse(savedQuestions) : shuffled);
 
     // If there are saved answers, then get that data and push it to state
     // else generate the answer object
-    setAnswers(savedAnswers ? JSON.parse(savedAnswers) : answerObj());
+    setAnswers(
+      savedAnswers ? JSON.parse(savedAnswers) : answerObj(type, shuffled)
+    );
   }, []);
 
   useEffect(() => {
@@ -36,21 +38,25 @@ const ConflictForm = (props) => {
   const renderQuestion = () =>
     currentQuestion.question ? (
       //   Generettes the HTML that will render the current question
+
       <StyledForm
         question={currentQuestion}
-        answers={formAnswers}
         currentAnswer={currentAnswer}
         handleAnswerChange={setCurrentAnswer}
         handleBack={goBack}
         handleNext={goForward}
         questions={questions}
         handleSubmit={submitQuiz}
+        answerHeight={25}
       />
     ) : (
-      <>
-        <div>Your Dominant Style is: {results.dominant}</div>
-        <div>Your Back Up Style is: {results.backUp}</div>
-      </>
+      type == "conflict" && (
+        <>
+          <div>Your Dominant Style is: {results.dominant}</div>
+          <div>Your Back Up Style is: {results.backUp}</div>
+          <div>Your Animal is: {results.animal}</div>
+        </>
+      )
     );
 
   const getQuestion = (last = false) => {
@@ -61,19 +67,22 @@ const ConflictForm = (props) => {
         questions.findIndex((item) => item.letter == lastQuestion) -
         (last ? 1 : 0);
       const questionData = questions[index];
+
       if (index === -1) {
-        calculateResults();
+        if (type === "conflict") {
+          calculateConflictResults();
+        }
       }
 
       return { index: index, ...questionData };
     }
   };
 
-  const calculateResults = () => {
+  const calculateConflictResults = () => {
     const newArray = [];
-    Object.keys(calculationObj).map((item) => {
+    Object.keys(calculationObj(type)).map((item) => {
       let value = 0;
-      calculationObj[item].map((letter) => {
+      calculationObj(type)[item].map((letter) => {
         value += answers[letter];
       });
       newArray.push([item, value]);
@@ -82,6 +91,12 @@ const ConflictForm = (props) => {
     const sorted = newArray.sort(function (a, b) {
       return a[1] - b[1];
     });
+    let matrix = [
+      ["Owl", "Bear"],
+      ["Deer", "Otter"],
+    ];
+    let animal =
+      matrix[answers["task---people"] - 1][answers["slow---fast"] - 1];
 
     let dominant = sorted[0][0];
     let backUp = sorted[1][0];
@@ -113,7 +128,7 @@ const ConflictForm = (props) => {
       }
     }
 
-    setResults({ dominant: dominant, backUp: backUp });
+    setResults({ dominant: dominant, backUp: backUp, animal: animal });
   };
 
   const goBack = () => {
@@ -131,6 +146,8 @@ const ConflictForm = (props) => {
   const updateAnswers = (number, previous = false) => {
     let newObj = { ...answers };
     newObj[currentQuestion.letter] = number;
+    console.log(currentQuestion);
+
     if (previous) {
       let last = getQuestion(true);
       newObj[last.letter] = number;
@@ -139,7 +156,7 @@ const ConflictForm = (props) => {
       setCurrentAnswer(0);
     }
     setAnswers(newObj);
-    window.localStorage.setItem("conflictAnswers", JSON.stringify(newObj));
+    window.localStorage.setItem(`${type}Answers`, JSON.stringify(newObj));
   };
 
   return <div>{renderQuestion()}</div>;
