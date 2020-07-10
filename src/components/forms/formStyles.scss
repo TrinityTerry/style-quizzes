@@ -1,0 +1,117 @@
+.form-container {
+  display: flex;
+
+  @media screen and (max-width: 500px) {
+    flex-direction: column;
+  }
+
+  .form-question {
+    font-size: 60px;
+    background-color: #399583;
+    color: white;
+    font-weight: 700;
+    padding: 20px;
+    height: 100vh;
+    width: 75%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+
+    @media screen and (max-width: 500px) {
+      font-size: 30px;
+      color: white;
+      width: 100%;
+      height: auto;
+      font-weight: 700;
+    }
+  }
+
+  .form-all-answers {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    justify-content: center;
+    width: 25%;
+
+    .form-answer {
+      width: 100%;
+      height: 18vh;
+      color: #ffffff;
+
+      &-radios {
+        display: none;
+      }
+
+      .selected {
+        background-color: #ffffff;
+        width: 100%;
+        padding: 10px 0;
+        color: #063a6a;
+      }
+
+      label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        transition: 0.3s;
+        background-color: #063a6a;
+        margin: 0;
+
+        .form-answer-text {
+          font-size: 1.5em;
+          line-height: 40px;
+          font-weight: 600;
+        }
+      }
+      label:hover {
+        font-size: 1.1rem;
+      }
+
+      @media screen and (max-width: 500px) {
+        width: 100%;
+        height: 75px;
+        margin: 2.5px 0;
+      }
+    }
+    @media screen and (max-width: 500px) {
+      width: 100%;
+    }
+
+    .form-buttons {
+      div {
+        font-size: 2em;
+        font-weight: 500;
+        color: #063a6a;
+        width: 50%;
+        cursor: pointer;
+        vertical-align: middle;
+        padding: 5px;
+        text-align: center;
+        height: 10vh;
+      }
+
+      &-previous {
+        &:hover {
+          color: #5bdb94;
+        }
+      }
+
+      &-next {
+        &:hover {
+          color: #5bdb94;
+        }
+      }
+
+      &-finish {
+        &:hover {
+          color: #5bdb94;
+        }
+      }
+      &-hidden {
+        display: none;
+      }
+    }
+  }
+}

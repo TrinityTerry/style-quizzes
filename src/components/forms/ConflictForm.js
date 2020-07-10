@@ -5,6 +5,7 @@ import {
   formAnswers,
   calculationObj,
 } from "../../modules/conflictData";
+import StyledForm from "./FormStyles";
 const ConflictForm = (props) => {
   const [questions, setQuestions] = useState([]); // Stores all questions [{question:"", letter:""}, ..]
   const [answers, setAnswers] = useState({}); // Stores all user answers {a:0, b:0, ...}
@@ -35,42 +36,16 @@ const ConflictForm = (props) => {
   const renderQuestion = () =>
     currentQuestion.question ? (
       //   Generettes the HTML that will render the current question
-      <div>
-        <h2>{currentQuestion.question}</h2>
-
-        {Object.keys(formAnswers).map((item) => {
-          return (
-            <>
-              <input
-                type="radio"
-                name="answer"
-                checked={currentAnswer == item}
-                value={item}
-                onChange={() => setCurrentAnswer(item)}
-              />{" "}
-              {formAnswers[item]}
-            </>
-          );
-        })}
-        {Math.floor(Math.random() * 5 + 1)}
-        <br />
-        {/* If past questions exist, allow the user to go back */}
-        {currentQuestion.index > 0 && (
-          <button onClick={goBack}>Previous</button>
-        )}
-        {/* If the current question has been answered and there's a next question, allow the user to submit and go to the next question */}
-        {currentQuestion.index !== questions.length - 1 && (
-          <button disabled={currentAnswer == 0} onClick={goForward}>
-            Next
-          </button>
-        )}
-        {/*If user is on the last question, allow them to submit the quiz */}
-        {currentQuestion.index === questions.length - 1 && (
-          <button disabled={currentAnswer == 0} onClick={submitQuiz}>
-            Finish
-          </button>
-        )}
-      </div>
+      <StyledForm
+        question={currentQuestion}
+        answers={formAnswers}
+        currentAnswer={currentAnswer}
+        handleAnswerChange={setCurrentAnswer}
+        handleBack={goBack}
+        handleNext={goForward}
+        questions={questions}
+        handleSubmit={submitQuiz}
+      />
     ) : (
       <>
         <div>Your Dominant Style is: {results.dominant}</div>
@@ -105,12 +80,13 @@ const ConflictForm = (props) => {
     });
 
     const sorted = newArray.sort(function (a, b) {
-      return b[1] - a[1];
+      return a[1] - b[1];
     });
+
     let dominant = sorted[0][0];
     let backUp = sorted[1][0];
     let startIndex = 1;
-
+    console.log(sorted);
     if (sorted[0][1] == sorted[1][1]) {
       dominant = "";
       const value = sorted[0][1];
